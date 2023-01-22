@@ -1,0 +1,94 @@
+.App {
+  /* height: 100%;
+  background-color: blue; */
+  width: 100vw;
+  height: 100vh;
+  /* background-color: rebeccapurple; */
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 20px;
+  font-family: roboto, arial;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.formname {
+  border-radius: 30px;
+  background-color: white;
+  padding: 30px;
+  height: 50%;
+  width: 50%;
+}
+.formsign {
+  height: auto;
+}
+
+.Homecontainer {
+  display: flex;
+  height: 90%;
+  align-items: center;
+}
+
+.carddrive {
+  border-radius: 30px;
+  height: 100%;
+  width: 80%;
+  background-color: ghostwhite;
+}
+
+.Homecol {
+  height: 100%;
+}
+
+.Homerow {
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.signinform {
+  background-color: white;
+  border-radius: 30px;
+  height: 80%;
+  padding: 35px;
+  max-width: 50%;
+  /* width: 70%; */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
