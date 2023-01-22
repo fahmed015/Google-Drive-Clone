@@ -7,10 +7,35 @@ import Button from "react-bootstrap/Button";
 import userContext from "../Context/AuthContext";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { signOut } from "firebase/auth";
+import {
+  getAuth,
+  setPersistence,
+  browserSessionPersistence,
+  inMemoryPersistence,
+} from "firebase/auth";
 export default function NavBar() {
   const user = useContext(userContext);
   const navigate = useNavigate();
+  const handleLogout = () => {
+    const auth = getAuth();
+    setPersistence(auth, inMemoryPersistence)
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <Navbar>
       <Container>
@@ -56,7 +81,9 @@ export default function NavBar() {
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">Acoount</NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">Log Out</NavDropdown.Item>
+                <NavDropdown.Item onClick={handleLogout}>
+                  Log Out
+                </NavDropdown.Item>
               </NavDropdown>
             ) : (
               <Nav.Link>

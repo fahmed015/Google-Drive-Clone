@@ -2,15 +2,7 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import { db } from "../Firebase/Firebase";
 import Form from "react-bootstrap/Form";
-import {
-  collection,
-  addDoc,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 import { useState } from "react";
 import userContext from "../Context/AuthContext";

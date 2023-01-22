@@ -14,15 +14,7 @@ import {
 } from "firebase/storage";
 import { db } from "../Firebase/Firebase";
 import Form from "react-bootstrap/Form";
-import {
-  collection,
-  addDoc,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { useState } from "react";
 import userContext from "../Context/AuthContext";
 import { useContext } from "react";
@@ -110,13 +102,6 @@ export default function AddFilebtn(props) {
           </Toast.Body>
         </Toast>
       </ToastContainer>
-      {/* <Form.Group controlId="formFile" className="mb-3">
-        <Form.Label>Default file input example</Form.Label>
-        <Form.Control
-          type="file"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
-      </Form.Group> */}
 
       <input
         type="file"

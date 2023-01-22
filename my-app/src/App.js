@@ -11,8 +11,6 @@ import HomePage from "./Pages/HomePage";
 import SigninPage from "./Pages/SigninPage";
 function App() {
   return (
-    // <div></div>
-
     <AuthContext>
       <Router>
         <Routes>
