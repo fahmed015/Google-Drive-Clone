@@ -18,7 +18,7 @@ export default function HomePage() {
   const navigateto = () => {
     console.log(user);
 
-    if (Object.keys(user).length !== 0) {
+    if (!!user) {
       navigate("/Account");
     } else {
       navigate("/signin");

@@ -10,8 +10,8 @@ import SignUpForm from "../Components/SignUpForm";
 function SignupPage() {
   return (
     <div className="App">
-      <Container fluid className="Homescreen">
-        <Row className="Homerow">
+      <Container className="Homecontainer">
+        <Row className="Homerow" style={{ height: "100%" }}>
           <SignUpForm></SignUpForm>
         </Row>
       </Container>

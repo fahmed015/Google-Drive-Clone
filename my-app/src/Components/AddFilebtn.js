@@ -29,7 +29,6 @@ export default function AddFilebtn(props) {
   const inputRef = useRef(null);
 
   const Upload = () => {
-    // 👇 We redirect the click event onto the hidden input element
     inputRef.current?.click();
   };
 
@@ -113,7 +112,7 @@ export default function AddFilebtn(props) {
 
       <Button
         onClick={Upload}
-        style={{ backgroundColor: "#7a82f2", marginRight: "0" }}
+        style={{ background: "#7a82f2", marginRight: "0" }}
       >
         Upload file
       </Button>

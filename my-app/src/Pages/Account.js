@@ -9,30 +9,26 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Addfolderbtn from "../Components/Addfolderbtn";
 import AddFilebtn from "../Components/AddFilebtn";
-
+import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
-import { signOut } from "firebase/auth";
+
 import { db } from "../Firebase/Firebase";
 import NavBar from "../Components/NavBar.js";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
-import {
-  getAuth,
-  setPersistence,
-  signInWithEmailAndPassword,
-  browserSessionPersistence,
-  inMemoryPersistence,
-} from "firebase/auth";
-import { getStorage, ref, deleteObject, getBlob } from "firebase/storage";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
+import { getStorage, ref, deleteObject, getBlob } from "firebase/storage";
+import DropdownButton from "react-bootstrap/DropdownButton";
 import { doc, deleteDoc } from "firebase/firestore";
 
 import userContext from "../Context/AuthContext";
 import { useContext } from "react";
-import UseFolder from "../Hooks/UseFolder";
+import UseFolder from "../Hooks/CurrentFolder";
 import { useParams } from "react-router-dom";
 
 const Account = () => {
+  const navigate = useNavigate();
   const user = useContext(userContext);
   const { folderId } = useParams();
   console.log(folderId);
@@ -44,19 +40,17 @@ const Account = () => {
 
   console.log(state);
 
-  const navigate = useNavigate();
+  const test = (folderid) => {
+    navigate(`/Account/${folderid}`);
+  };
 
   const deletefile = (id, name) => {
     deleteDoc(doc(db, "file", id))
       .then(() => {
         console.log("Document successfully deleted!");
-
         const storage = getStorage();
-
-        // Create a reference to the file to delete
         const deleteRef = ref(storage, name);
 
-        // Delete the file
         deleteObject(deleteRef)
           .then(() => {
             // File deleted successfully
@@ -68,32 +62,27 @@ const Account = () => {
       .catch((error) => {
         console.error("Error removing document: ", error);
       });
-
-    // const xhr = new XMLHttpRequest();
-    // xhr.responseType = "blob";
-    // xhr.onload = (event) => {
-    //   const blob = xhr.response;
-    // };
-    // xhr.open("GET", url);
-    // xhr.send();
   };
 
   const deletefolder = (id) => {
-    deleteDoc(doc(db, "file", id))
+    deleteDoc(doc(db, "folder", id))
       .then(() => {
-        console.log("Document successfully deleted!");
+        // const q = query(collection(db, "file"), where("parentid", "==", id));
+        // console.log(q);
+        // getDocs(q)
+        //   .then((querySnapshot) => {
+        //     querySnapshot.forEach((doc) => {
+        //       console.log(doc.id, " => ", doc.data());
+        //       deletefile(doc.id, doc.data().filename);
+        //     });
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error removing document: ", error);
+        //   });
       })
       .catch((error) => {
         console.error("Error removing document: ", error);
       });
-
-    // const xhr = new XMLHttpRequest();
-    // xhr.responseType = "blob";
-    // xhr.onload = (event) => {
-    //   const blob = xhr.response;
-    // };
-    // xhr.open("GET", url);
-    // xhr.send();
   };
 
   const downloadfile = async (url, name) => {
@@ -160,40 +149,16 @@ const Account = () => {
     xhr.send();
   };
 
-  const handleLogout = () => {
-    const auth = getAuth();
-    setPersistence(auth, inMemoryPersistence)
-      .then(() => {})
-      .catch((error) => {
-        console.log(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      });
-
-    signOut(auth)
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   return (
     <div className="App">
       <NavBar />
-      {/* <h1>Account</h1>
-      <p>User Email: {user.email}</p>
-      <p>User id: {user.uid}</p>
-      <p>Name {user.displayName}</p>
-      */}
 
       <Container className="Homecontainer">
         <Row className="Homerow" style={{ height: "90%" }}>
           <div className="carddrive">
             <Row className="mt-5">
               <Col>
-                <h1 className="  fw-bold  " style={{ color: "#7a82f2" }}>
+                <h1 className="  fw-bold  " style={{ color: "black" }}>
                   My Cloud
                 </h1>
               </Col>
@@ -205,13 +170,17 @@ const Account = () => {
               </Col>
             </Row>
 
-            <Row>
-              <Table striped hover>
+            <Row
+              style={{ alignItems: "center", justifyContent: "center" }}
+              className="px-3 mt-3"
+            >
+              <Table borderless hover>
                 <thead>
                   <tr>
-                    <th>File name</th>
+                    <th> Name</th>
                     <th>Storage</th>
                     <th>date</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -219,7 +188,6 @@ const Account = () => {
                     return (
                       <tr key={childFolder.id}>
                         <td>
-                          {" "}
                           <Link
                             style={{ color: "black", textDecoration: "none" }}
                             to={{
@@ -232,11 +200,32 @@ const Account = () => {
                         <td> </td>
                         <td> </td>
                         <td>
-                          <Button
+                          {/* <Button
                             onClick={deletefolder.bind(this, childFolder.id)}
                           >
                             delete
-                          </Button>
+                          </Button> */}
+
+                          <Dropdown>
+                            <Dropdown.Toggle
+                              variant="light"
+                              id="dropdown-basic"
+                            >
+                              ...
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                              <Dropdown.Item
+                                onClick={deletefolder.bind(
+                                  this,
+                                  childFolder.id
+                                )}
+                              >
+                                Delete
+                              </Dropdown.Item>
+                              <Dropdown.Item>Move</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
                         </td>
                       </tr>
                     );
@@ -250,14 +239,54 @@ const Account = () => {
                             href={childFile.fileurl}
                             target="_blank"
                             rel="noopener noreferrer"
+                            style={{ color: "black", textDecoration: "none" }}
                           >
                             {childFile.filename}
                           </a>
                         </td>
                         <td> </td>
-                        <td> </td>
                         <td>
-                          <Button
+                          {/* <Dropdown>
+                            <Button variant="success">Split Button</Button>
+
+                            <Dropdown.Toggle
+                              split
+                              variant="success"
+                              id="dropdown-split-basic"
+                            />
+
+                            <Dropdown.Menu>
+                              <Dropdown.Item href="#/action-1">
+                                Action
+                              </Dropdown.Item>
+                              <Dropdown.Item href="#/action-2">
+                                Another action
+                              </Dropdown.Item>
+                              <Dropdown.Item href="#/action-3">
+                                Something else
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown> */}
+                        </td>
+                        <td>
+                          <DropdownButton
+                            // className="circlebutton"
+                            title="..."
+                            variant="light"
+                          >
+                            <Dropdown.Item
+                              onClick={deletefile.bind(
+                                this,
+                                childFile.id,
+                                childFile.filename
+                              )}
+                            >
+                              Delete
+                            </Dropdown.Item>
+                            <Dropdown.Item>Move</Dropdown.Item>
+                          </DropdownButton>
+
+                          {/* <Button
                             onClick={deletefile.bind(
                               this,
                               childFile.id,
@@ -265,7 +294,7 @@ const Account = () => {
                             )}
                           >
                             delete
-                          </Button>
+                          </Button> */}
                         </td>
                       </tr>
                     );

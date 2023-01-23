@@ -33,26 +33,36 @@ function SignUpForm() {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user.uid);
+
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        })
+          .then(() => {
+            signOut(auth)
+              .then(() => {
+                console.log("outt");
+                navigate("/signin");
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          })
+          .catch((error) => {});
       })
       .catch((error) => {
+        console.log(error);
         const errorCode = error.code;
         const errorMessage = error.message;
-        // ..
       });
-
-    updateProfile(auth.currentUser, {
-      displayName: name,
-    })
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {});
   };
 
   return (
-    <Card style={{ width: "50%", height: "50%" }}>
-      <Container fluid>
-        <Row className="p-4 ">
+    <Card style={{ width: "50%", height: "60%" }}>
+      <Container fluid style={{ height: "100%" }}>
+        <Row
+          className="p-4 mt-5"
+          style={{ alignContent: "center", justifyContent: "center" }}
+        >
           <Form onSubmit={SignUp}>
             <Form.Group>
               <Form.Control
@@ -72,7 +82,7 @@ function SignUpForm() {
               />
             </Form.Group>
 
-            <Form.Group className="mt-3">
+            <Form.Group className="mt-3 mb-4">
               <Form.Control
                 type="password"
                 placeholder="Password"
@@ -81,14 +91,14 @@ function SignUpForm() {
               />
             </Form.Group>
 
-            <div className="mt-4 ">
+            <div className="d-grid ">
               <Button
                 variant="secondary"
                 type="submit"
                 size="md"
-                style={{ background: "#845695", fontWeight: "bold" }}
+                style={{ background: "#7a82f2", fontWeight: "bold" }}
               >
-                sign up
+                Sign Up
               </Button>
             </div>
           </Form>

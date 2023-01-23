@@ -26,6 +26,8 @@ function App() {
             <Route exact path="/Account/:folderId" element={<Account />} />
             <Route exact path="/Account" element={<Account />} />
           </Route>
+
+          <Route path="*" element={<HomePage />} />
         </Routes>
       </Router>
     </AuthContext>

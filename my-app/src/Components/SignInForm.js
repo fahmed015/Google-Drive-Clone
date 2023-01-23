@@ -56,11 +56,11 @@ function SigninForm() {
     <Card style={{ width: "50%", height: "60%" }}>
       <Container fluid style={{ height: "100%" }}>
         <Row
-          className="p-4 "
+          className="p-4 mt-5"
           style={{ alignContent: "center", justifyContent: "center" }}
         >
           <Form onSubmit={SignIn}>
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-4">
               <Form.Control
                 type="text"
                 placeholder="email"
@@ -79,10 +79,9 @@ function SigninForm() {
             </Form.Group>
             <div className="d-grid ">
               <Button
-                variant="secondary"
                 type="submit"
                 size="md"
-                style={{ background: "#845695", fontWeight: "bold" }}
+                style={{ background: "#7a82f2", fontWeight: "bold" }}
               >
                 Sign In
               </Button>
@@ -91,8 +90,16 @@ function SigninForm() {
         </Row>
         <Row className=" p-4">
           <div style={{ color: "red" }}>{errormsg}</div>
-          <p>Don't have an account yet? </p>
-          <Link to="/signup">signup</Link>
+          <p>
+            Don't have an account yet?
+            <Link
+              to="/signup "
+              style={{ color: "#7a82f2", textDecoration: "none" }}
+            >
+              {" "}
+              signup
+            </Link>
+          </p>
         </Row>
       </Container>
     </Card>

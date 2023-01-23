@@ -15,20 +15,25 @@ import {
   inMemoryPersistence,
 } from "firebase/auth";
 export default function NavBar() {
-  const user = useContext(userContext);
+  var user = useContext(userContext);
+  if (!!user == false || Object.keys(user).length === 0) {
+    console.log(user);
+    user = null;
+  }
   const navigate = useNavigate();
   const handleLogout = () => {
     const auth = getAuth();
-    setPersistence(auth, inMemoryPersistence)
-      .then(() => {})
-      .catch((error) => {
-        console.log(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      });
+    // setPersistence(auth, inMemoryPersistence)
+    //   .then(() => {})
+    //   .catch((error) => {
+    //     console.log(error);
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //   });
 
     signOut(auth)
       .then(() => {
+        console.log("outt");
         navigate("/");
       })
       .catch((error) => {
@@ -50,7 +55,7 @@ export default function NavBar() {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto"></Nav>
           <Nav>
-            <Nav.Link>
+            {/* <Nav.Link>
               {" "}
               <span style={{ fontSize: "18px", fontWeight: "bold" }}>
                 About
@@ -67,64 +72,30 @@ export default function NavBar() {
               <span style={{ fontSize: "18px", fontWeight: "bold" }}>
                 Pricing
               </span>{" "}
-            </Nav.Link>
+            </Nav.Link> */}
 
-            {!!user.uid ? (
-              <NavDropdown
-                title={
-                  <div style={{ background: "purple" }} className="avatar">
-                    F
-                  </div>
-                }
-                id="collasible-nav-dropdown"
-              >
-                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">Acoount</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout}>
-                  Log Out
-                </NavDropdown.Item>
-              </NavDropdown>
-            ) : (
-              <Nav.Link>
-                <Button
-                  style={{ backgroundColor: "#5964ff" }}
-                  // size="lg"
-                  onClick={() => navigate("/signin")}
+            {
+              !!user ? (
+                <NavDropdown
+                  title={
+                    <div style={{ background: "purple" }} className="avatar">
+                      {user.displayName}
+                    </div>
+                  }
+                  id="collasible-nav-dropdown"
                 >
-                  Get started
-                </Button>
-              </Nav.Link>
-            )}
-
-            {/* <Nav.Link>
-              <Button
-                style={{ backgroundColor: "#5964ff" }}
-                // size="lg"
-                onClick={() => navigate("/signin")}
-              >
-                Get started
-              </Button>
-            </Nav.Link>
-
-            <NavDropdown
-              title={
-                <div style={{ background: "purple" }} className="avatar">
-                  F
-                </div>
-              }
-              id="collasible-nav-dropdown"
-            >
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown> */}
+                  <NavDropdown.Item>Action</NavDropdown.Item>
+                  <NavDropdown.Item>{user.email}</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>
+                    Log Out
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <></>
+              )
+              //
+            }
           </Nav>
         </Navbar.Collapse>
       </Container>

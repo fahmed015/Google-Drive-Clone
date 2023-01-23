@@ -61,6 +61,7 @@ function UseFolder(folderid = null, folder = null) {
   }, [folderid]);
 
   useEffect(() => {
+    console.log(user);
     if (Object.keys(user).length !== 0) {
       const q = query(
         collection(db, "folder"),

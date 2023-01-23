@@ -5,17 +5,13 @@ const userContext = createContext();
 
 export function AuthContext({ children }) {
   const [userin, setUserin] = useState({});
+  console.log(userin);
+  const auth = getAuth();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log(user);
-        setUserin(user);
-        const uid = user.uid;
-        console.log(uid);
-      } else {
-        setUserin({});
-      }
+      console.log(user);
+      setUserin(user);
     });
   }, []);
 

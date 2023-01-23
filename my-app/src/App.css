@@ -34,7 +34,7 @@
 
 .Homecontainer {
   display: flex;
-  height: 90%;
+  height: 85%;
   align-items: center;
 }
 
@@ -43,6 +43,28 @@
   height: 100%;
   width: 80%;
   background-color: ghostwhite;
+}
+
+.table {
+  border-radius: 35px;
+}
+/* 
+.table-hover tr:hover {
+  background-color: white;
+} */
+
+/* .dropdown-toggle::after {
+  display: none !important;
+} */
+
+.circlebutton {
+  background-color: red;
+  width: 30px;
+  height: 30px;
+  padding: 6px 0px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 12px;
 }
 
 .Homecol {

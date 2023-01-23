@@ -37,7 +37,7 @@ export default function Addfolderbtn(props) {
 
   return (
     <div>
-      <Button style={{ backgroundColor: "#7a82f2" }} onClick={handleShow}>
+      <Button style={{ background: "#7a82f2" }} onClick={handleShow}>
         Add Folder
       </Button>
 
@@ -58,10 +58,10 @@ export default function Addfolderbtn(props) {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="light" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={addfolder}>
+          <Button variant="light" onClick={addfolder}>
             add folder
           </Button>
         </Modal.Footer>
