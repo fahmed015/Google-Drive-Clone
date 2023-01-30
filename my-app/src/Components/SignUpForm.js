@@ -4,19 +4,14 @@ import Row from "react-bootstrap/esm/Row";
 import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import { useNavigate } from "react-router-dom";
-import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
-  signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
 
-import { auth, db } from "../Firebase/Firebase";
-import userContext from "../Context/AuthContext";
-import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { auth } from "../Firebase/Firebase";
 
 function SignUpForm() {
   const navigate = useNavigate();

@@ -2,6 +2,10 @@ import React, { useRef } from "react";
 import Button from "react-bootstrap/Button";
 import Toast from "react-bootstrap/Toast";
 import { storage } from "../Firebase/Firebase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FiUpload } from "react-icons/fi";
+//import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { UilFileUpload } from "@iconscout/react-unicons";
 import ToastContainer from "react-bootstrap/ToastContainer";
 import ProgressBar from "react-bootstrap/ProgressBar";
 
@@ -10,22 +14,23 @@ import {
   ref,
   uploadBytesResumable,
   uploadBytes,
+  getMetadata,
   getDownloadURL,
 } from "firebase/storage";
 import { db } from "../Firebase/Firebase";
 import Form from "react-bootstrap/Form";
+import { useSelector, useDispatch } from "react-redux";
 import { collection, addDoc } from "firebase/firestore";
 import { useState } from "react";
-import userContext from "../Context/AuthContext";
-import { useContext } from "react";
-import Modal from "react-bootstrap/Modal";
 
 export default function AddFilebtn(props) {
-  const { currentfolder } = props;
+  //const { currentfolder } = props;
+  const currentfolder = useSelector((state) => state.folderid);
   //console.log(currentfolder);
   const [show, setShow] = useState(false);
   const [progressdata, setProgressdata] = useState(null);
-  const user = useContext(userContext);
+  const user = useSelector((state) => state.user);
+  // const user = useContext(userContext);
   const inputRef = useRef(null);
 
   const Upload = () => {
@@ -55,39 +60,35 @@ export default function AddFilebtn(props) {
           // Handle unsuccessful uploads
         },
         () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            addDoc(fileref, {
-              filename: file.name,
-              parentid: currentfolder.folderid,
-              userid: user.uid,
-              fileurl: downloadURL,
-            });
+          getMetadata(filestorage)
+            .then((metadata) => {
+              console.log(metadata);
 
-            console.log("File available at", downloadURL);
-          });
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                addDoc(fileref, {
+                  filename: file.name,
+                  parentid: currentfolder,
+                  userid: user.uid,
+                  type: metadata.contentType,
+                  size: metadata.size,
+                  fileurl: downloadURL,
+                });
+
+                console.log("File available at", downloadURL);
+              });
+
+              // Metadata now contains the metadata for 'images/forest.jpg'
+            })
+            .catch((error) => {
+              // Uh-oh, an error occurred!
+            });
         }
       );
-
-      // const uploadTask = uploadBytes(filestorage, file).then((snapshot) => {
-      //   getDownloadURL(ref(storage, file.name)).then((url) => {
-      //     console.log(url);
-
-      //     addDoc(fileref, {
-      //       filename: file.name,
-      //       parentid: currentfolder.folderid,
-      //       userid: user.uid,
-      //       fileurl: url,
-      //     });
-      //   });
-
-      //   console.log("Uploaded a blob or file!");
-      // });
     }
   };
 
   return (
     <div>
-      {/* <input type="file"></input>; */}
       <ToastContainer className="p-3" position="bottom-end">
         <Toast onClose={() => setShow(false)} show={show}>
           <Toast.Header>
@@ -105,16 +106,14 @@ export default function AddFilebtn(props) {
       <input
         type="file"
         ref={inputRef}
-        // onChange={handleFileChange}
         onChange={(e) => addfile(e.target.files[0])}
         style={{ display: "none" }}
       />
 
-      <Button
-        onClick={Upload}
-        style={{ background: "#7a82f2", marginRight: "0" }}
-      >
-        Upload file
+      <Button onClick={Upload} className="DriveButton">
+        <FiUpload className="icon" />
+        {/* <UilFileUpload className="icon" /> */}
+        Upload File
       </Button>
     </div>
   );

@@ -8,6 +8,7 @@ import userContext from "../Context/AuthContext";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import { useSelector, useDispatch } from "react-redux";
 import {
   getAuth,
   setPersistence,
@@ -15,8 +16,11 @@ import {
   inMemoryPersistence,
 } from "firebase/auth";
 export default function NavBar() {
-  var user = useContext(userContext);
-  if (!!user == false || Object.keys(user).length === 0) {
+  // var user = useContext(userContext);
+
+  var user = useSelector((state) => state.user);
+  console.log(user);
+  if (!!user === false || Object.keys(user).length === 0) {
     console.log(user);
     user = null;
   }
@@ -44,47 +48,22 @@ export default function NavBar() {
   return (
     <Navbar>
       <Container>
-        <Navbar.Brand>
-          <span style={{ color: "#7a82f2", fontWeight: "bold" }}>
+        <Navbar.Brand onClick={() => navigate("/")}>
+          <div style={{ color: "#7a82f2", fontWeight: "bold" }}>
             {" "}
             Google Docs{" "}
-          </span>
+          </div>
         </Navbar.Brand>
 
         {/* <Navbar.Toggle aria-controls="responsive-navbar-nav" /> */}
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto"></Nav>
           <Nav>
-            {/* <Nav.Link>
-              {" "}
-              <span style={{ fontSize: "18px", fontWeight: "bold" }}>
-                About
-              </span>
-            </Nav.Link>
-            <Nav.Link>
-              {" "}
-              <span style={{ fontSize: "18px", fontWeight: "bold" }}>
-                Features
-              </span>
-            </Nav.Link>
-            <Nav.Link>
-              {" "}
-              <span style={{ fontSize: "18px", fontWeight: "bold" }}>
-                Pricing
-              </span>{" "}
-            </Nav.Link> */}
-
             {
               !!user ? (
                 <NavDropdown
-                  title={
-                    <div style={{ background: "purple" }} className="avatar">
-                      {user.displayName}
-                    </div>
-                  }
-                  id="collasible-nav-dropdown"
+                  title={<div className="avatar">{user.displayName}</div>}
                 >
-                  <NavDropdown.Item>Action</NavDropdown.Item>
                   <NavDropdown.Item>{user.email}</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>

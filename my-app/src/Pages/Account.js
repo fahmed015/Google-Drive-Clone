@@ -1,6 +1,5 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../Firebase/Firebase";
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 import { useEffect } from "react";
@@ -11,49 +10,245 @@ import Addfolderbtn from "../Components/Addfolderbtn";
 import AddFilebtn from "../Components/AddFilebtn";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
-
+import { connect } from "react-redux";
 import { db } from "../Firebase/Firebase";
 import NavBar from "../Components/NavBar.js";
 import Col from "react-bootstrap/Col";
-import Card from "react-bootstrap/Card";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { FaFolder } from "react-icons/fa";
+import { BsFileEarmarkPdf } from "react-icons/bs";
+import { AiFillFile } from "react-icons/ai";
+import { BsImage } from "react-icons/bs";
+import ListGroup from "react-bootstrap/ListGroup";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 
+import {
+  selectFolder,
+  updateFolder,
+  setChildFile,
+  setChildFolder,
+} from "../Store/Actions";
 import { getStorage, ref, deleteObject, getBlob } from "firebase/storage";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { doc, deleteDoc } from "firebase/firestore";
-
-import userContext from "../Context/AuthContext";
-import { useContext } from "react";
-import UseFolder from "../Hooks/CurrentFolder";
 import { useParams } from "react-router-dom";
 
-const Account = () => {
+const Account = (props) => {
   const navigate = useNavigate();
-  const user = useContext(userContext);
+
   const { folderId } = useParams();
   console.log(folderId);
+  const foldercurrent = props.Folderid;
+  console.log(foldercurrent);
 
-  const state = UseFolder(folderId);
+  const [show, setShow] = useState(false);
+  const [moveitem, setMoveitem] = useState(null);
+  const [moveitemtype, setMoveitemtype] = useState(null);
+  const [select, setSelect] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [dis, setDis] = useState(false);
 
-  const childfolders = state.childfolder;
-  const childfiles = state.childfile;
+  const [arrfolder, setArrfolder] = useState([]);
+  const handleClose = () => {
+    setHistory([]);
+    setShow(false);
+  };
+  useEffect(() => {
+    if (!!folderId === false) {
+      props.selectFolder(null);
+    } else {
+      props.selectFolder(folderId);
+    }
+  }, [folderId]);
 
-  console.log(state);
+  function FileItem({ name }) {
+    console.log(name);
+    if (name === "application/pdf") {
+      return <BsFileEarmarkPdf className="icon2" />;
+    } else {
+      if (name === "image/jpeg") {
+        console.log("nmjmjmm");
+        return <BsImage className="icon2" />;
+      } else {
+        return <AiFillFile className="icon2" />;
+      }
+    }
+  }
 
-  const test = (folderid) => {
+  useEffect(() => {
+    if (Object.keys(props.User).length !== 0) {
+      console.log(props.Folderid);
+      console.log(props.Folderid);
+      console.log(props.Folderid);
+      const q = query(
+        collection(db, "folder"),
+        where("parentid", "==", props.Folderid),
+        where("userid", "==", props.User.uid)
+      );
+      console.log(q);
+      onSnapshot(q, (querySnapshot) => {
+        const childarr = [];
+        querySnapshot.forEach((doc) => {
+          const data = { id: doc.id, ...doc.data() };
+
+          childarr.push(data);
+          console.log(childarr);
+          console.log(doc.data());
+        });
+
+        props.setChildFolder(props.Folderid, childarr);
+      });
+    }
+  }, [props.Folderid, props.User]);
+
+  useEffect(() => {
+    if (Object.keys(props.User).length !== 0) {
+      const q = query(
+        collection(db, "file"),
+        where("parentid", "==", props.Folderid),
+        where("userid", "==", props.User.uid)
+      );
+
+      onSnapshot(q, (querySnapshot) => {
+        const childarr = [];
+        querySnapshot.forEach((doc) => {
+          console.log(doc);
+          const data = { id: doc.id, ...doc.data() };
+
+          childarr.push(data);
+          console.log(childarr);
+          console.log(doc.data());
+        });
+        props.setChildFile(childarr);
+      });
+    }
+  }, [props.Folderid, props.User]);
+
+  const Gotofolder = (folderid) => {
+    console.log(folderid);
     navigate(`/Account/${folderid}`);
+  };
+
+  const Move = () => {
+    var ref;
+    if (moveitemtype === "folder") {
+      ref = doc(db, "folder", moveitem);
+    } else {
+      ref = doc(db, "file", moveitem);
+    }
+
+    // Set the "capital" field of the city 'DC'
+    updateDoc(ref, {
+      parentid: select,
+    })
+      .then(() => {
+        console.log("Document successfully updated!");
+        setShow(false);
+      })
+      .catch((error) => {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+      });
+  };
+
+  const handleShow = (current, type) => {
+    setMoveitem(current);
+    setHistory([]);
+    setMoveitemtype(type);
+    showfolders(null, current, false);
+
+    setShow(true);
+  };
+
+  const selectfromlist = (id) => {
+    setArrfolder(
+      arrfolder.map((folder) => {
+        if (folder.id === id) {
+          setSelect(id);
+          return { ...folder, activecond: true };
+        } else {
+          return { ...folder, activecond: false };
+        }
+      })
+    );
+  };
+
+  const showfolders = (folderid, current, back) => {
+    console.log(folderid);
+    console.log(current);
+    if (back === true) {
+      console.log(history);
+      history.pop();
+      setHistory(history);
+      console.log(history);
+      folderid = history.splice(-1)[0];
+      setDis(false);
+      if (folderid === null) {
+        console.log("anaa fel rooott");
+        setHistory([null]);
+        setDis(true);
+      }
+      console.log(folderid);
+    } else {
+      const newdata = [...history, folderid];
+      console.log(newdata);
+      setHistory(newdata);
+      setDis(false);
+    }
+
+    const q = query(
+      collection(db, "folder"),
+      where("parentid", "==", folderid),
+      where("userid", "==", props.User.uid)
+    );
+    const arr = [];
+
+    getDocs(q)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data());
+          var disable = false;
+          if (doc.id === current) {
+            disable = true;
+          }
+          const data = {
+            id: doc.id,
+            disablecond: disable,
+            activecond: false,
+            ...doc.data(),
+          };
+          arr.push(data);
+          console.log(arr);
+        });
+
+        setArrfolder(arr);
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+  };
+
+  const Viewfile = (url) => {
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const deletefile = (id, name) => {
     deleteDoc(doc(db, "file", id))
       .then(() => {
-        console.log("Document successfully deleted!");
+        console.log("file in firebase deleted with id", id);
+
         const storage = getStorage();
         const deleteRef = ref(storage, name);
 
         deleteObject(deleteRef)
           .then(() => {
-            // File deleted successfully
+            console.log("file in storage deleted!");
           })
           .catch((error) => {
             // Uh-oh, an error occurred!
@@ -64,25 +259,58 @@ const Account = () => {
       });
   };
 
-  const deletefolder = (id) => {
-    deleteDoc(doc(db, "folder", id))
-      .then(() => {
-        // const q = query(collection(db, "file"), where("parentid", "==", id));
-        // console.log(q);
-        // getDocs(q)
-        //   .then((querySnapshot) => {
-        //     querySnapshot.forEach((doc) => {
-        //       console.log(doc.id, " => ", doc.data());
-        //       deletefile(doc.id, doc.data().filename);
-        //     });
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error removing document: ", error);
-        //   });
+  const deletefilesinfolder = (id) => {
+    const q2 = query(collection(db, "file"), where("parentid", "==", id));
+
+    getDocs(q2)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          deletefile(doc.id, doc.data().filename);
+        });
       })
       .catch((error) => {
         console.error("Error removing document: ", error);
       });
+  };
+
+  const Deleterecurrsion = (id) => {
+    deleteDoc(doc(db, "folder", id))
+      .then(() => {
+        deletefilesinfolder(id);
+        const qu = query(collection(db, "folder"), where("parentid", "==", id));
+
+        getDocs(qu)
+          .then((querySnapshot) => {
+            if (querySnapshot.size === 0) {
+              // console.log("eshtaa ha3mel delte lel folder with id");
+              // console.log(id);
+              deleteDoc(doc(db, "folder", id))
+                .then(() => {
+                  console.log("Folder deleted with id", id);
+                  deletefilesinfolder(id);
+
+                  return;
+                })
+                .catch((error) => {
+                  console.error("Error removing document: ", error);
+                });
+            }
+
+            querySnapshot.forEach((doc) => {
+              Deleterecurrsion(doc.id);
+            });
+          })
+          .catch((error) => {
+            console.error("Error removing document: ", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+  };
+
+  const deletefolder = (id) => {
+    Deleterecurrsion(id);
   };
 
   const downloadfile = async (url, name) => {
@@ -163,10 +391,10 @@ const Account = () => {
                 </h1>
               </Col>
               <Col md="auto">
-                <Addfolderbtn currentfolder={state}> </Addfolderbtn>
+                <Addfolderbtn> </Addfolderbtn>
               </Col>
               <Col md="auto">
-                <AddFilebtn currentfolder={state}> </AddFilebtn>
+                <AddFilebtn> </AddFilebtn>
               </Col>
             </Row>
 
@@ -178,123 +406,81 @@ const Account = () => {
                 <thead>
                   <tr>
                     <th> Name</th>
-                    <th>Storage</th>
-                    <th>date</th>
+
+                    <th>Size</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {childfolders.map((childFolder) => {
+                  {props.Childfolder.map((childFolder) => {
                     return (
-                      <tr key={childFolder.id}>
+                      <tr
+                        key={childFolder.id}
+                        onClick={() => Gotofolder(childFolder.id)}
+                        // onClick={Gotofolder.bind(this, childFolder.id)}
+                      >
                         <td>
-                          <Link
-                            style={{ color: "black", textDecoration: "none" }}
-                            to={{
-                              pathname: `/Account/${childFolder.id}`,
-                            }}
-                          >
-                            {childFolder.foldername}
-                          </Link>{" "}
+                          <FaFolder className="icon2" />
+                          {childFolder.foldername}
                         </td>
                         <td> </td>
-                        <td> </td>
+
                         <td>
-                          {/* <Button
-                            onClick={deletefolder.bind(this, childFolder.id)}
+                          <DropdownButton
+                            title="..."
+                            onClick={(e) => e.stopPropagation()}
+                            // id={`dropdown-button-drop-${childFolder.id}`}
                           >
-                            delete
-                          </Button> */}
-
-                          <Dropdown>
-                            <Dropdown.Toggle
-                              variant="light"
-                              id="dropdown-basic"
+                            <Dropdown.Item
+                              onClick={() => deletefolder(childFolder.id)}
                             >
-                              ...
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item
-                                onClick={deletefolder.bind(
-                                  this,
-                                  childFolder.id
-                                )}
-                              >
-                                Delete
-                              </Dropdown.Item>
-                              <Dropdown.Item>Move</Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
+                              Delete
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => handleShow(childFolder.id)}
+                            >
+                              Move
+                            </Dropdown.Item>
+                          </DropdownButton>
                         </td>
                       </tr>
                     );
                   })}
 
-                  {childfiles.map((childFile) => {
+                  {props.Childfile.map((childFile) => {
                     return (
-                      <tr key={childFile.id}>
+                      <tr
+                        key={childFile.id}
+                        onClick={() => Viewfile(childFile.fileurl)}
+                      >
                         <td>
-                          <a
-                            href={childFile.fileurl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: "black", textDecoration: "none" }}
-                          >
-                            {childFile.filename}
-                          </a>
-                        </td>
-                        <td> </td>
-                        <td>
-                          {/* <Dropdown>
-                            <Button variant="success">Split Button</Button>
+                          <FileItem name={childFile.type} />
 
-                            <Dropdown.Toggle
-                              split
-                              variant="success"
-                              id="dropdown-split-basic"
-                            />
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item href="#/action-1">
-                                Action
-                              </Dropdown.Item>
-                              <Dropdown.Item href="#/action-2">
-                                Another action
-                              </Dropdown.Item>
-                              <Dropdown.Item href="#/action-3">
-                                Something else
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown> */}
+                          {childFile.filename}
                         </td>
+
+                        <td> {childFile.size}</td>
                         <td>
                           <DropdownButton
-                            // className="circlebutton"
+                            // id="dropdown-basic-button"
                             title="..."
-                            variant="light"
+                            onClick={(e) => e.stopPropagation()}
+
+                            // className="test"
                           >
                             <Dropdown.Item
-                              onClick={deletefile.bind(
-                                this,
-                                childFile.id,
-                                childFile.filename
-                              )}
+                              onClick={() =>
+                                deletefile(childFile.id, childFile.filename)
+                              }
                             >
                               Delete
                             </Dropdown.Item>
-                            <Dropdown.Item>Move</Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => handleShow(childFile.id)}
+                            >
+                              Move
+                            </Dropdown.Item>
                           </DropdownButton>
-
-                          {/* <Button
-                            onClick={deletefile.bind(
-                              this,
-                              childFile.id,
-                              childFile.filename
-                            )}
-                          >
-                            delete
-                          </Button> */}
                         </td>
                       </tr>
                     );
@@ -306,94 +492,72 @@ const Account = () => {
         </Row>
       </Container>
 
-      {/* <Addfolderbtn currentfolder={state}> </Addfolderbtn>
-      <AddFilebtn currentfolder={state}> </AddFilebtn>
-
-      <button onClick={handleLogout}>Logout</button> */}
-
-      {/* <Table striped hover>
-        <thead>
-          <tr>
-            <th>File name</th>
-            <th>Storage</th>
-            <th>date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <td colSpan={2}>Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
-        </tbody>
-      </Table> */}
-
-      {/* {childfolders.length > 0 && (
-        <>
-          <h2>Folders</h2>
-
-          {childfolders.map((childFolder) => (
-            <div key={childFolder.id}>
-              <Link
-                to={{
-                  pathname: `/Account/${childFolder.id}`,
-                }}
-              >
-                {" "}
-                <Button>{childFolder.foldername}</Button>
-              </Link>
-            </div>
-          ))}
-        </>
-      )}
-
-      {childfiles.length > 0 && (
-        <>
-          <h2>files</h2>
-
-          {childfiles.map((childFile) => (
-            <div key={childFile.id}>
-              <Button
-                onClick={deletefile.bind(
-                  this,
-                  childFile.id,
-                  childFile.filename
-                )}
-              >
-                delete
-              </Button>
-              <a
-                href={childFile.fileurl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {childFile.filename}
-              </a>
-            </div>
-          ))}
-        </>
-      )} */}
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          {/* <Modal.Title>Modal heading</Modal.Title> */}
+          <Button
+            disabled={dis}
+            onClick={() => showfolders(null, moveitem, true)}
+          >
+            ←
+          </Button>
+        </Modal.Header>
+        <Modal.Body>
+          <ListGroup>
+            {arrfolder.map((folder) => {
+              return (
+                <ListGroup.Item
+                  className="d-flex justify-content-between align-items-start"
+                  key={folder.id}
+                  disabled={folder.disablecond}
+                  action
+                  active={folder.activecond}
+                  onClick={() => selectfromlist(folder.id)}
+                >
+                  <div> {folder.foldername}</div>
+                  <Button
+                    variant="light"
+                    disabled={folder.disablecond}
+                    onClick={() => showfolders(folder.id, moveitem, false)}
+                  >
+                    →{" "}
+                  </Button>
+                </ListGroup.Item>
+              );
+            })}
+          </ListGroup>
+        </Modal.Body>
+        <Modal.Footer>
+          {/* <Button variant="light" onClick={handleClose}>
+            Close
+          </Button> */}
+          <Button variant="light" onClick={Move}>
+            Move Here
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
-
-    /* <Button
-                onClick={downloadfile.bind(
-                  this,
-                  childFile.fileurl,
-                  childFile.filename
-                )}
-              >
-                download
-              </Button> */
   );
 };
 
-export default Account;
+const mapStateToProps = (state) => {
+  return {
+    User: state.user,
+    Folderid: state.folderid,
+    Childfolder: state.childfolder,
+    Childfile: state.childfile,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    selectFolder: (folderid) => dispatch(selectFolder(folderid)),
+    updateFolder: (folderid) => dispatch(updateFolder(folderid)),
+    setChildFolder: (arr, id) => dispatch(setChildFolder(arr, id)),
+    setChildFile: (arr) => dispatch(setChildFile(arr)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Account);
+
+//export default Account;

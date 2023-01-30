@@ -3,17 +3,21 @@ import Button from "react-bootstrap/Button";
 import { db } from "../Firebase/Firebase";
 import Form from "react-bootstrap/Form";
 import { collection, addDoc } from "firebase/firestore";
-
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import userContext from "../Context/AuthContext";
+
+import { FiFolderPlus } from "react-icons/fi";
+import { UilFolderMedical } from "@iconscout/react-unicons";
+// import userContext from "../Context/AuthContext";
 import { useContext } from "react";
 import Modal from "react-bootstrap/Modal";
 
 export default function Addfolderbtn(props) {
-  const { currentfolder } = props;
-  console.log(currentfolder);
-  const user = useContext(userContext);
-
+  //const { currentfolder } = props;
+  // console.log(currentfolder);
+  const currentfolder = useSelector((state) => state.folderid);
+  // const user = useContext(userContext);
+  const user = useSelector((state) => state.user);
   const [show, setShow] = useState(false);
   const [foldername, setFoldername] = useState("");
 
@@ -26,7 +30,7 @@ export default function Addfolderbtn(props) {
 
       addDoc(folderref, {
         foldername: foldername,
-        parentid: currentfolder.folderid,
+        parentid: currentfolder,
         userid: user.uid,
       });
       console.log("folder created");
@@ -37,11 +41,13 @@ export default function Addfolderbtn(props) {
 
   return (
     <div>
-      <Button style={{ background: "#7a82f2" }} onClick={handleShow}>
+      <Button className="DriveButton" onClick={handleShow}>
+        <FiFolderPlus className="icon" />
         Add Folder
       </Button>
 
       <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton></Modal.Header>
         {/* <Modal.Header closeButton>
           <Modal.Title>Modal heading</Modal.Title>
         </Modal.Header> */}
@@ -58,10 +64,10 @@ export default function Addfolderbtn(props) {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="light" onClick={handleClose}>
+          {/* <Button variant="light" onClick={handleClose}>
             Close
-          </Button>
-          <Button variant="light" onClick={addfolder}>
+          </Button> */}
+          <Button variant="primary" onClick={addfolder}>
             add folder
           </Button>
         </Modal.Footer>

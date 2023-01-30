@@ -5,16 +5,15 @@ import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
 import background from "../BACK.jpg";
 import NavBar from "../Components/NavBar.js";
-import SigninForm from "../Components/SignInForm";
 import Button from "react-bootstrap/esm/Button";
 import { useNavigate } from "react-router-dom";
-import userContext from "../Context/AuthContext";
-import { useContext } from "react";
+import { useSelector } from "react-redux";
 
 export default function HomePage() {
   const navigate = useNavigate();
-
-  const user = useContext(userContext);
+  const user = useSelector((state) => state.user);
+  console.log(user);
+  // const user = useContext(userContext);
   const navigateto = () => {
     console.log(user);
 

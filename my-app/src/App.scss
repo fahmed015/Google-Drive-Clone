@@ -1,9 +1,83 @@
+@import "~bootstrap/scss/bootstrap";
+
+$width-container: 1000px;
+$color: #7a82f2;
+$color2: #959bed;
+$color3: ghostwhite;
+$color4: #e6e6eb;
+
 .App {
-  /* height: 100%;
-  background-color: blue; */
   width: 100vw;
   height: 100vh;
-  /* background-color: rebeccapurple; */
+}
+.dropdown-menu {
+  background-color: pink;
+  margin-right: 0;
+
+  z-index: 2;
+}
+.dropdown {
+  .btn {
+    background: $color3;
+    border-radius: 50px;
+    color: black;
+    border-color: $color3;
+
+    &:active {
+      background-color: $color3 !important;
+      border-color: $color3 !important;
+      color: black;
+    }
+  }
+  .dropdown-toggle::after {
+    content: none;
+  }
+}
+.table {
+  tr {
+    &:hover {
+      .btn {
+        background: #e6e6eb;
+        border-color: #e6e6eb;
+      }
+    }
+  }
+}
+.DriveButton {
+  background: $color;
+  border-radius: 20px;
+  height: 50px;
+  border-color: $color;
+  // margin-right: 0;
+
+  &:hover {
+    background: $color;
+    border-color: $color;
+    box-shadow: 1px 2px rgba($color, 0.15);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    background-color: $color2 !important;
+    border-color: $color2 !important;
+  }
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.icon2 {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  color: $color;
+}
+
+.test::after {
+  content: none !important;
 }
 
 .App-logo {
@@ -11,6 +85,7 @@
   pointer-events: none;
 }
 .avatar {
+  background-color: purple;
   width: 30px;
   height: 30px;
   border-radius: 50%;
