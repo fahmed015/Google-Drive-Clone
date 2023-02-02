@@ -10,35 +10,87 @@ $color4: #e6e6eb;
   width: 100vw;
   height: 100vh;
 }
-.dropdown-menu {
-  background-color: pink;
-  margin-right: 0;
 
-  z-index: 2;
+.signcard {
+  width: 50%;
+  height: auto;
 }
-.dropdown {
-  .btn {
-    background: $color3;
-    border-radius: 50px;
-    color: black;
-    border-color: $color3;
+.signrow {
+  align-content: center;
+  justify-content: center;
+  margin-top: 50px;
+  padding: 15px;
+  margin-bottom: 40px;
+}
+.signbutton {
+  background: $color;
+  font-weight: "bold";
+  border-radius: 10px;
 
-    &:active {
-      background-color: $color3 !important;
-      border-color: $color3 !important;
-      color: black;
-    }
+  &:hover {
+    background: $color;
+    border-color: $color;
   }
+  &:active {
+    background-color: $color3 !important;
+    border-color: $color3 !important;
+    color: black;
+  }
+}
+.signlink {
+  color: $color;
+  text-decoration: none;
+}
+.addfolderbtn {
+  background: $color;
+  font-weight: "bold";
+  border-radius: 10px;
+  border-color: $color;
+
+  &:hover {
+    background: $color;
+    border-color: $color;
+  }
+  &:active {
+    background-color: $color3 !important;
+    border-color: $color3 !important;
+    color: black;
+  }
+}
+
+.dropdown {
+  // .btn {
+  //   background: $color3;
+  //   border-radius: 50px;
+  //   color: black;
+  //   border-color: $color3;
+  //   &:hover {
+  //     background: white !important;
+  //   }
+  //   &:active {
+  //     color: black;
+  //   }
+  // }
   .dropdown-toggle::after {
     content: none;
   }
 }
 .table {
   tr {
+    .btn {
+      background: $color3;
+      border-radius: 50px;
+      color: black;
+      border-color: $color3;
+    }
+
     &:hover {
       .btn {
-        background: #e6e6eb;
-        border-color: #e6e6eb;
+        background: $color4;
+        border-color: $color4;
+        // &:hover {
+        //   background: white !important;
+        // }
       }
     }
   }
@@ -123,14 +175,6 @@ $color4: #e6e6eb;
 .table {
   border-radius: 35px;
 }
-/* 
-.table-hover tr:hover {
-  background-color: white;
-} */
-
-/* .dropdown-toggle::after {
-  display: none !important;
-} */
 
 .circlebutton {
   background-color: red;
