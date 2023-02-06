@@ -24,8 +24,9 @@ export default function MoveModal({
   const [showModel, setShowModel] = useState<boolean>(false);
   const [selectFolder, setSelectFolder] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
-  const [disable, setDisable] = useState<boolean>(true);
+  const [disableBackbtn, setdisableBackbtn] = useState<boolean>(true);
   const [arrFolder, setArrFolder] = useState<ArrayMove[]>([]);
+  const [disableMovebtn, setDisableMovebtn] = useState<boolean>(false);
 
   const showFolders = async (
     folderId: string | null,
@@ -35,37 +36,40 @@ export default function MoveModal({
     if (back === true) {
       const newarr = history.slice(0, -1);
 
-      setHistory(newarr);
+      await setHistory(newarr);
 
       await setHistory((prev) => {
         if (prev.length === 0) {
-          setDisable(true);
+          setdisableBackbtn(true);
           folderId = null;
         } else {
-          setDisable(false);
+          setdisableBackbtn(false);
           folderId = prev.slice(-1)[0];
         }
-
+        console.log(prev);
         return prev;
       });
     } else {
       if (folderId === null) {
-        setDisable(true);
+        setdisableBackbtn(true);
       } else {
-        setDisable(false);
+        setdisableBackbtn(false);
         const x = [folderId];
-        setHistory((prev) => [...prev, ...x]);
+        await setHistory((prev) => [...prev, ...x]);
         setHistory((prev) => {
+          console.log(prev);
           return prev;
         });
       }
     }
+    console.log(folderId);
     const arr = await getFoldersForMoveModal(folderId, user.uid, moveItem);
     setArrFolder(arr);
   };
 
   useEffect(() => {
     setShowModel(show);
+    setDisableMovebtn(false);
     if (show === true) {
       showFolders(null, moveItem, false);
     }
@@ -79,6 +83,7 @@ export default function MoveModal({
   };
 
   const moveFolder = () => {
+    setDisableMovebtn(true);
     updateFolderOrFile(moveItemType, selectFolder, moveItem);
     handleClose();
   };
@@ -100,7 +105,7 @@ export default function MoveModal({
     <Modal show={showModel} onHide={handleClose}>
       <Modal.Header closeButton>
         <Button
-          disabled={disable}
+          disabled={disableBackbtn}
           onClick={() => showFolders(null, moveItem, true)}
         >
           ←
@@ -111,7 +116,7 @@ export default function MoveModal({
           {arrFolder.map((folder) => {
             return (
               <ListGroup.Item
-                className="d-flex justify-content-between align-items-start"
+                className="d-flex justify-content-between align-items-start "
                 key={folder.id}
                 disabled={folder.disablecond}
                 action
@@ -132,7 +137,11 @@ export default function MoveModal({
         </ListGroup>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={moveFolder}>
+        <Button
+          className="addfolderbtn"
+          onClick={moveFolder}
+          disabled={disableMovebtn}
+        >
           Move Here
         </Button>
       </Modal.Footer>

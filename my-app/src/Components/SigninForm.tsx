@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from "react";
 import Container from "react-bootstrap/Container";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Form, Row, Card } from "react-bootstrap";
+import { Button, Form, Row, Card, Spinner } from "react-bootstrap";
 import { signIn } from "../Firebase/Firebase";
 
 function SigninForm() {
@@ -9,16 +9,15 @@ function SigninForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errormsg, setErrormsg] = useState<string>("");
-  const [disable, setDisable] = useState<boolean>(false);
+  const [disablebtn, setDisablebtn] = useState<boolean>(false);
 
   const SignIn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setDisable(true);
-
+    setDisablebtn(true);
     const error = await signIn(email, password);
 
     if (!!error) {
+      setDisablebtn(false);
       setErrormsg(error);
     } else {
       navigate("/Account");
@@ -48,7 +47,16 @@ function SigninForm() {
               />
             </Form.Group>
             <div className="d-grid ">
-              <Button type="submit" className="signbutton" disabled={disable}>
+              <Button
+                type="submit"
+                className="signbutton"
+                disabled={disablebtn}
+              >
+                {disablebtn && (
+                  <Spinner animation="border" role="status" size="sm">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                )}
                 Sign In
               </Button>
             </div>
