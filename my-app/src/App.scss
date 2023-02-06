@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
 $width-container: 1000px;
 $color: #7a82f2;
@@ -24,7 +24,7 @@ $color4: #e6e6eb;
 }
 .signbutton {
   background: $color;
-  font-weight: "bold";
+  font-weight: 'bold';
   border-radius: 10px;
 
   &:hover {
@@ -43,7 +43,7 @@ $color4: #e6e6eb;
 }
 .addfolderbtn {
   background: $color;
-  font-weight: "bold";
+  font-weight: 'bold';
   border-radius: 10px;
   border-color: $color;
 

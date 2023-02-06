@@ -3,26 +3,48 @@ import {
   UPDATE_FOLDER,
   SET_CHILDFOLDER,
   SET_CHILDFILE,
-  SET_USER
-} from './ActionTypes';
+  SET_USER,
+} from "./ActionTypes";
 
-interface Action {
-  type: string;
-  payload: any;
-}
+// interface ChildFolder {
+//   id: string;
+//   foldername: string;
+//   parentid: string | null;
+//   userid: string;
+// }
+// interface ChildFile {
+//   id: string;
+//   filename: string;
+//   parentid: string | null;
+//   userid: string;
+//   fileurl: string;
+//   size: number;
+//   type: string;
+// }
 
-export interface StateRoot {
-  folderid: any;
-  childfolder: any;
-  childfile: any;
-  user: any;
-}
+// export interface StateRoot {
+//   folderid: string | null;
+//   childfolder: ChildFolder[] | null;
+//   childfile: ChildFile[] | null;
+//   user: any;
+// }
+// interface Payload {
+//   FolderId: string | null;
+//   ChildFolder: ChildFolder[] ;
+//   ChildFile: ChildFile[] ;
+//   User: any;
+// }
+
+// interface Action {
+//   type: string;
+//   payload: Payload;
+// }
 
 const intialstate = {
   folderid: null,
   childfolder: [],
   childfile: [],
-  user: {}
+  user: {},
 };
 
 export const userReducer = (state: StateRoot = intialstate, action: Action) => {
@@ -30,7 +52,7 @@ export const userReducer = (state: StateRoot = intialstate, action: Action) => {
     case SET_USER: {
       return {
         ...state,
-        user: action.payload.User
+        user: action.payload.User,
       };
     }
 
@@ -39,7 +61,7 @@ export const userReducer = (state: StateRoot = intialstate, action: Action) => {
         ...state,
         folderid: action.payload.FolderId,
         childfolder: [],
-        childfile: []
+        childfile: [],
       };
     }
     case UPDATE_FOLDER: {
@@ -47,14 +69,14 @@ export const userReducer = (state: StateRoot = intialstate, action: Action) => {
         ...state,
         folderid: action.payload.FolderId,
         childfolder: [],
-        childfile: []
+        childfile: [],
       };
     }
     case SET_CHILDFOLDER: {
       if (action.payload.FolderId === state.folderid) {
         state = {
           ...state,
-          childfolder: action.payload.ChildFolder
+          childfolder: action.payload.ChildFolder,
         };
       }
 
@@ -64,7 +86,7 @@ export const userReducer = (state: StateRoot = intialstate, action: Action) => {
       if (action.payload.FolderId === state.folderid) {
         state = {
           ...state,
-          childfile: action.payload.ChildFile
+          childfile: action.payload.ChildFile,
         };
       }
 

@@ -1,55 +1,75 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Modal, ListGroup } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-import { updateFolderOrFile, getFoldersForMoveModal } from '../Firebase/Firebase';
-import { StateRoot } from '../Store/Reducer';
-export default function MoveModal({ show, moveItem, moveItemType, closeMoveModal }) {
+import React, { useState, useEffect } from "react";
+import { Button, Modal, ListGroup } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import {
+  updateFolderOrFile,
+  getFoldersForMoveModal,
+} from "../Firebase/Firebase";
+// import { StateRoot } from "../Store/Reducer";
+
+interface PropsMoveType {
+  show: boolean;
+  moveItem: string;
+  moveItemType: string;
+  closeMoveModal: () => void;
+}
+
+export default function MoveModal({
+  show,
+  moveItem,
+  moveItemType,
+  closeMoveModal,
+}: PropsMoveType) {
   const user = useSelector((state: StateRoot) => state.user);
-  const [showModel, setShowModel] = useState(false);
-  const [selectFolder, setSelectFolder] = useState(null);
-  const [history, setHistory] = useState([]);
-  const [disable, setDisable] = useState(true);
-  const [arrFolder, setArrFolder] = useState([]);
+  const [showModel, setShowModel] = useState<boolean>(false);
+  const [selectFolder, setSelectFolder] = useState<string | null>(null);
+  const [history, setHistory] = useState<string[]>([]);
+  const [disable, setDisable] = useState<boolean>(true);
+  const [arrFolder, setArrFolder] = useState<ArrayMove[]>([]);
 
-  const showFolders = useCallback(
-    async (folderId, moveItem, back) => {
-      // setHistory((h) => {
-      //   return h
-      // });
-      // lodash
+  const showFolders = async (
+    folderId: string | null,
+    moveItem: string,
+    back: boolean
+  ) => {
+    if (back === true) {
+      const newarr = history.slice(0, -1);
 
-      if (back === true) {
-        history.pop();
-        setHistory(history);
-        folderId = history.splice(-1)[0];
-        setDisable(false);
-        if (folderId === null) {
-          setHistory([null]);
+      setHistory(newarr);
+
+      await setHistory((prev) => {
+        if (prev.length === 0) {
           setDisable(true);
-        }
-      } else {
-        const newdata = [...history, folderId];
-
-        setHistory(newdata);
-        if (folderId === null) {
-          setDisable(true);
+          folderId = null;
         } else {
           setDisable(false);
+          folderId = prev.slice(-1)[0];
         }
-      }
 
-      const arr = await getFoldersForMoveModal(folderId, user.uid, moveItem);
-      setArrFolder(arr);
-    },
-    [user, history, setHistory]
-  );
+        return prev;
+      });
+    } else {
+      if (folderId === null) {
+        setDisable(true);
+      } else {
+        setDisable(false);
+        const x = [folderId];
+        setHistory((prev) => [...prev, ...x]);
+        setHistory((prev) => {
+          return prev;
+        });
+      }
+    }
+    const arr = await getFoldersForMoveModal(folderId, user.uid, moveItem);
+    setArrFolder(arr);
+  };
 
   useEffect(() => {
     setShowModel(show);
     if (show === true) {
       showFolders(null, moveItem, false);
     }
-  }, [show, moveItem, showFolders]);
+  }, [show, moveItem]);
 
   const handleClose = () => {
     setHistory([]);
@@ -63,11 +83,11 @@ export default function MoveModal({ show, moveItem, moveItemType, closeMoveModal
     handleClose();
   };
 
-  const selectFromList = (id) => {
+  const selectFromList = (id: string) => {
     setArrFolder(
       arrFolder.map((folder) => {
         if (folder.id === id) {
-          selectFolder(id);
+          setSelectFolder(id);
           return { ...folder, activecond: true };
         } else {
           return { ...folder, activecond: false };
@@ -79,7 +99,10 @@ export default function MoveModal({ show, moveItem, moveItemType, closeMoveModal
   return (
     <Modal show={showModel} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Button disabled={disable} onClick={() => showFolders(null, moveItem, true)}>
+        <Button
+          disabled={disable}
+          onClick={() => showFolders(null, moveItem, true)}
+        >
           ←
         </Button>
       </Modal.Header>
@@ -88,18 +111,20 @@ export default function MoveModal({ show, moveItem, moveItemType, closeMoveModal
           {arrFolder.map((folder) => {
             return (
               <ListGroup.Item
-                className='d-flex justify-content-between align-items-start'
+                className="d-flex justify-content-between align-items-start"
                 key={folder.id}
                 disabled={folder.disablecond}
                 action
                 active={folder.activecond}
-                onClick={() => selectFromList(folder.id)}>
+                onClick={() => selectFromList(folder.id)}
+              >
                 <div> {folder.foldername}</div>
                 <Button
-                  variant='light'
+                  variant="light"
                   disabled={folder.disablecond}
-                  onClick={() => showFolders(folder.id, moveItem, false)}>
-                  →{' '}
+                  onClick={() => showFolders(folder.id, moveItem, false)}
+                >
+                  →{" "}
                 </Button>
               </ListGroup.Item>
             );
@@ -107,7 +132,7 @@ export default function MoveModal({ show, moveItem, moveItemType, closeMoveModal
         </ListGroup>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='primary' onClick={moveFolder}>
+        <Button variant="primary" onClick={moveFolder}>
           Move Here
         </Button>
       </Modal.Footer>

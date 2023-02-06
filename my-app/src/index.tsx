@@ -1,17 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 // import "bootstrap/dist/css/bootstrap.min.css";
 
-import { userReducer } from './Store/Reducer';
-import { createStore } from 'redux';
+import { userReducer } from "./Store/Reducer";
+import { createStore } from "redux";
 
-import { Provider } from 'react-redux';
+import { Provider } from "react-redux";
 export const store = createStore(userReducer);
 
 // const root = ReactDOM.createRoot(document.getElementById('root')) ;
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 const root = ReactDOM.createRoot(rootElement as Element);
 
 root.render(

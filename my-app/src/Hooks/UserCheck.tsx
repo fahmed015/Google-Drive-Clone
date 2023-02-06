@@ -1,16 +1,14 @@
-import { Outlet } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import React from 'react';
-import { StateRoot } from '../Store/Reducer';
+import { Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import React from "react";
+// import { StateRoot } from "../Store/Reducer";
 
 function Usercheck() {
-  // const user = useSelector((state) => state.user);
   const user = useSelector((state: StateRoot) => state.user);
-  return !!user ? <Outlet /> : <Navigate to='/' />;
+  return !!user ? <Outlet /> : <Navigate to="/" />;
 }
 export function Usercheck2() {
-  // const user = useSelector((state) => state.user);
   const user = useSelector((state: StateRoot) => state.user);
 
   if (!!user) {
@@ -18,7 +16,7 @@ export function Usercheck2() {
       //loading
       return <Outlet />;
     } else {
-      return <Navigate to='/' />;
+      return <Navigate to="/" />;
     }
   } else {
     return <Outlet />;

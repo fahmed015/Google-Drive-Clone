@@ -1,18 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import AddFolderbtn from '../Components/AddFolderbtn';
-import AddFilebtn from '../Components/AddFilebtn';
-import { connect } from 'react-redux';
-import NavBar from '../Components/NavBar.js';
-import { FaFolder } from 'react-icons/fa';
-import { BsFileEarmarkPdf } from 'react-icons/bs';
-import { AiFillFile } from 'react-icons/ai';
-import { BsImage } from 'react-icons/bs';
-import MoveModal from '../Components/MoveModal';
-import { deleteFile, deleteFolder, getFoldersOrFilesQuery } from '../Firebase/Firebase';
-import { Dropdown, Table, Container, Row, Col, DropdownButton, Breadcrumb } from 'react-bootstrap';
-import { onSnapshot } from 'firebase/firestore';
-import { selectFolder, updateFolder, setChildFile, setChildFolder } from '../Store/Actions';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import AddFolderbtn from "../Components/AddFolderbtn";
+import AddFilebtn from "../Components/AddFilebtn";
+import { connect } from "react-redux";
+import NavBar from "../Components/NavBar";
+import { FaFolder } from "react-icons/fa";
+import { BsFileEarmarkPdf } from "react-icons/bs";
+import { AiFillFile } from "react-icons/ai";
+import { BsImage } from "react-icons/bs";
+import { Dispatch } from "redux";
+import MoveModal from "../Components/MoveModal";
+
+import {
+  deleteFile,
+  deleteFolder,
+  getFoldersOrFilesQuery,
+} from "../Firebase/Firebase";
+import {
+  Dropdown,
+  Table,
+  Container,
+  Row,
+  Col,
+  DropdownButton,
+} from "react-bootstrap";
+import { onSnapshot } from "firebase/firestore";
+import { selectFolder, setChildFile, setChildFolder } from "../Store/Actions";
+
+interface PropsType {
+  folderId: string | null;
+  user: any;
+  childFile: ChildFile[];
+  childFolder: ChildFolder[];
+}
+interface PropsTypeAction {
+  selectFolder: (folderid: string | null) => Action;
+  setChildFile: (folderid: string | null, childfile: ChildFile[]) => Action;
+  setChildFolder: (
+    folderid: string | null,
+    childfolder: ChildFolder[]
+  ) => Action;
+}
 
 const Account = ({
   folderId,
@@ -21,27 +49,23 @@ const Account = ({
   setChildFile,
   setChildFolder,
   childFile,
-  childFolder
-}) => {
+  childFolder,
+}: PropsType & PropsTypeAction) => {
   const navigate = useNavigate();
   const { folderIdParams } = useParams();
-  const [show, setShow] = useState(false);
-  const [moveItem, setMoveItem] = useState(null);
-  const [moveItemType, setMoveItemType] = useState(null);
+  const [show, setShow] = useState<boolean>(false);
+  const [moveItem, setMoveItem] = useState<string>("");
+  const [moveItemType, setMoveItemType] = useState<string>("");
 
   useEffect(() => {
-    if (!!folderIdParams === false) {
-      selectFolder(null);
-    } else {
-      selectFolder(folderIdParams);
-    }
+    selectFolder(!!folderIdParams ? folderIdParams : null);
   }, [folderIdParams, selectFolder]);
 
   useEffect(() => {
     if (Object.keys(user).length !== 0) {
-      const q = getFoldersOrFilesQuery('folder', folderId, user.uid);
+      const q = getFoldersOrFilesQuery("folder", folderId, user.uid);
       onSnapshot(q, (querySnapshot) => {
-        const childarr = [];
+        const childarr: ChildFolder[] = [];
         querySnapshot.forEach((doc) => {
           const data = { id: doc.id, ...doc.data() };
           childarr.push(data);
@@ -53,10 +77,10 @@ const Account = ({
 
   useEffect(() => {
     if (Object.keys(user).length !== 0) {
-      const q = getFoldersOrFilesQuery('file', folderId, user.uid);
+      const q = getFoldersOrFilesQuery("file", folderId, user.uid);
 
       onSnapshot(q, (querySnapshot) => {
-        const childarr = [];
+        const childarr: ChildFile[] = [];
         querySnapshot.forEach((doc) => {
           const data = { id: doc.id, ...doc.data() };
           childarr.push(data);
@@ -66,22 +90,22 @@ const Account = ({
     }
   }, [folderId, user, setChildFile]);
 
-  const goToFolder = (folderid: any) => {
+  const goToFolder = (folderid: string) => {
     navigate(`/Account/${folderid}`);
   };
 
-  function IconType({ name }) {
-    if (name === 'application/pdf') {
-      return <BsFileEarmarkPdf className='icon2' />;
+  function IconType({ name }: any) {
+    if (name === "application/pdf") {
+      return <BsFileEarmarkPdf className="icon2" />;
     } else {
-      if (name === 'image/jpeg') {
-        return <BsImage className='icon2' />;
+      if (name === "image/jpeg") {
+        return <BsImage className="icon2" />;
       } else {
-        return <AiFillFile className='icon2' />;
+        return <AiFillFile className="icon2" />;
       }
     }
   }
-  const showMoveModal = (current: any, type: any) => {
+  const showMoveModal = (current: string, type: string) => {
     setMoveItem(current);
     setMoveItemType(type);
     setShow(true);
@@ -90,15 +114,15 @@ const Account = ({
     setShow(false);
   };
 
-  const viewFile = (url: any) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+  const viewFile = (url: string | undefined) => {
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const DeleteFile = async (id: any, name: any) => {
+  const DeleteFile = async (id: string, name: string | undefined) => {
     await deleteFile(id, name);
   };
 
-  const DeleteFolder = async (id: any) => {
+  const DeleteFolder = async (id: string) => {
     await deleteFolder(id);
   };
 
@@ -167,27 +191,30 @@ const Account = ({
   // };
 
   return (
-    <div className='App'>
+    <div className="App">
       <NavBar />
 
-      <Container className='Homecontainer'>
-        <Row className='Homerow' style={{ height: '90%' }}>
-          <div className='carddrive'>
-            <Row className='mt-5'>
+      <Container className="Homecontainer">
+        <Row className="Homerow" style={{ height: "90%" }}>
+          <div className="carddrive">
+            <Row className="mt-5">
               <Col>
-                <h1 className='  fw-bold  ' style={{ color: 'black' }}>
+                <h1 className="  fw-bold  " style={{ color: "black" }}>
                   My Cloud
                 </h1>
               </Col>
-              <Col md='auto'>
+              <Col md="auto">
                 <AddFolderbtn> </AddFolderbtn>
               </Col>
-              <Col md='auto'>
+              <Col md="auto">
                 <AddFilebtn> </AddFilebtn>
               </Col>
             </Row>
 
-            <Row style={{ alignItems: 'center', justifyContent: 'center' }} className='px-3 mt-3'>
+            <Row
+              style={{ alignItems: "center", justifyContent: "center" }}
+              className="px-3 mt-3"
+            >
               <Table borderless hover>
                 <thead>
                   <tr>
@@ -198,88 +225,82 @@ const Account = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {childFolder.map(
-                    (childfolder: {
-                      id: React.Key | null | undefined;
-                      foldername:
-                        | string
-                        | number
-                        | boolean
-                        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-                        | React.ReactFragment
-                        | React.ReactPortal
-                        | null
-                        | undefined;
-                    }) => {
-                      return (
-                        <tr key={childfolder.id} onClick={() => goToFolder(childfolder.id)}>
-                          <td>
-                            <FaFolder className='icon2' />
-                            {childfolder.foldername}
-                          </td>
-                          {/* <td> </td> */}
+                  {childFolder.map((childfolder: ChildFolder) => {
+                    return (
+                      <tr
+                        key={childfolder.id}
+                        onClick={() => goToFolder(childfolder.id)}
+                      >
+                        <td>
+                          <FaFolder className="icon2" />
+                          {childfolder.foldername}
+                        </td>
+                        {/* <td> </td> */}
 
-                          <td>
-                            <DropdownButton
-                              // rootCloseEvent="mousedown"
-                              title='...'
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                              id={`dropdown-button-drop-${childfolder.id}`}>
-                              <Dropdown.Item onClick={() => DeleteFolder(childfolder.id)}>
-                                Delete
-                              </Dropdown.Item>
-                              <Dropdown.Item
-                                onClick={() => showMoveModal(childfolder.id, 'folder')}>
-                                Move
-                              </Dropdown.Item>
-                            </DropdownButton>
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
+                        <td>
+                          <DropdownButton
+                            // rootCloseEvent="mousedown"
+                            title="..."
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                            id={`dropdown-button-drop-${childfolder.id}`}
+                          >
+                            <Dropdown.Item
+                              onClick={() => DeleteFolder(childfolder.id)}
+                            >
+                              Delete
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() =>
+                                showMoveModal(childfolder.id, "folder")
+                              }
+                            >
+                              Move
+                            </Dropdown.Item>
+                          </DropdownButton>
+                        </td>
+                      </tr>
+                    );
+                  })}
 
-                  {childFile.map(
-                    (childfile: {
-                      id: React.Key | null | undefined;
-                      fileurl: any;
-                      type: any;
-                      filename:
-                        | string
-                        | number
-                        | boolean
-                        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-                        | React.ReactFragment
-                        | React.ReactPortal
-                        | null
-                        | undefined;
-                    }) => {
-                      return (
-                        <tr key={childfile.id} onClick={() => viewFile(childfile.fileurl)}>
-                          <td>
-                            <IconType name={childfile.type} />
+                  {childFile.map((childfile: ChildFile) => {
+                    return (
+                      <tr
+                        key={childfile.id}
+                        onClick={() => viewFile(childfile.fileurl)}
+                      >
+                        <td>
+                          <IconType name={childfile.type} />
 
-                            {childfile.filename}
-                          </td>
+                          {childfile.filename}
+                        </td>
 
-                          {/* <td> {childfile.size}</td> */}
-                          <td>
-                            <DropdownButton title='...' onClick={(e) => e.stopPropagation()}>
-                              <Dropdown.Item
-                                onClick={() => DeleteFile(childfile.id, childfile.filename)}>
-                                Delete
-                              </Dropdown.Item>
-                              <Dropdown.Item onClick={() => showMoveModal(childfile.id, 'file')}>
-                                Move
-                              </Dropdown.Item>
-                            </DropdownButton>
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
+                        {/* <td> {childfile.size}</td> */}
+                        <td>
+                          <DropdownButton
+                            title="..."
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Dropdown.Item
+                              onClick={() =>
+                                DeleteFile(childfile.id, childfile.filename)
+                              }
+                            >
+                              Delete
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() =>
+                                showMoveModal(childfile.id, "file")
+                              }
+                            >
+                              Move
+                            </Dropdown.Item>
+                          </DropdownButton>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </Row>
@@ -291,35 +312,28 @@ const Account = ({
         show={show}
         moveItem={moveItem}
         moveItemType={moveItemType}
-        closeMoveModal={closeMoveModal}></MoveModal>
+        closeMoveModal={closeMoveModal}
+      ></MoveModal>
     </div>
   );
 };
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: StateRoot): PropsType => {
   return {
     user: state.user,
     folderId: state.folderid,
     childFolder: state.childfolder,
-    childFile: state.childfile
+    childFile: state.childfile,
   };
 };
 
-const mapDispatchToProps = (
-  dispatch: (arg0: {
-    type: string;
-    payload:
-      | { FolderId: any }
-      | { FolderId: any }
-      | { FolderId: any; ChildFolder: any }
-      | { FolderId: any; ChildFile: any };
-  }) => any
-) => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    selectFolder: (folderid: any) => dispatch(selectFolder(folderid)),
-    updateFolder: (folderid: any) => dispatch(updateFolder(folderid)),
-    setChildFolder: (id: any, arr: any) => dispatch(setChildFolder(id, arr)),
-    setChildFile: (id: any, arr: any) => dispatch(setChildFile(id, arr))
+    selectFolder: (folderid: string | null) => dispatch(selectFolder(folderid)),
+    setChildFolder: (folderid: string | null, childfolder: ChildFolder[]) =>
+      dispatch(setChildFolder(folderid, childfolder)),
+    setChildFile: (folderid: string | null, childfile: ChildFile[]) =>
+      dispatch(setChildFile(folderid, childfile)),
   };
 };
 

@@ -3,49 +3,55 @@ import {
   SET_USER,
   UPDATE_FOLDER,
   SET_CHILDFOLDER,
-  SET_CHILDFILE
-} from './ActionTypes';
+  SET_CHILDFILE,
+} from "./ActionTypes";
 
 export const setUser = (user: any) => {
   return {
     type: SET_USER,
     payload: {
-      User: user
-    }
+      User: user,
+    },
   };
 };
 
-export const selectFolder = (folderid: any) => {
+export const selectFolder = (folderid: string | null) => {
   return {
     type: SELECT_FOLDER,
     payload: {
-      FolderId: folderid
-    }
+      FolderId: folderid,
+    },
   };
 };
-export const updateFolder = (folderid: any) => {
+export const updateFolder = (folderid: string | null) => {
   return {
     type: UPDATE_FOLDER,
     payload: {
-      FolderId: folderid
-    }
+      FolderId: folderid,
+    },
   };
 };
-export const setChildFolder = (folderid: any, childfolder: any) => {
+export const setChildFolder = (
+  folderid: string | null,
+  childfolder: ChildFolder[]
+) => {
   return {
     type: SET_CHILDFOLDER,
     payload: {
       FolderId: folderid,
-      ChildFolder: childfolder
-    }
+      ChildFolder: childfolder,
+    },
   };
 };
-export const setChildFile = (folderid: any, childfile: any) => {
+export const setChildFile = (
+  folderid: string | null,
+  childfile: ChildFile[]
+) => {
   return {
     type: SET_CHILDFILE,
     payload: {
       FolderId: folderid,
-      ChildFile: childfile
-    }
+      ChildFile: childfile,
+    },
   };
 };
