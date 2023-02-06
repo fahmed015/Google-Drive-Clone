@@ -24,28 +24,18 @@ export default function HomePage() {
       <Container className="Homecontainer">
         <Row className="Homerow">
           <Col>
-            <h1
-              className="my-4 display-4 fw-bold  px-3"
-              style={{ color: "black", textAlign: "center" }}
-            >
-              Manage <span style={{ color: "#7a82f2" }}>all your files </span>
+            <h1 className="my-4 display-4  px-3 info">
+              Manage <span className="maincolor">all your files </span>
               <br />
-              in <span style={{ color: "#7a82f2" }}> one place</span>
+              in <span className="maincolor"> one place</span>
             </h1>
-            <p style={{ color: "black", textAlign: "center" }}>
+            <p className="info">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet,
               itaque accusantium odio, soluta, corrupti aliquam quibusdam
               tempora at cupiditate quis eum maiores libero veritatis? Dicta
               facilis sint aliquid ipsum atque?
             </p>
-            <div
-              style={{
-                margin: "auto",
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-            >
+            <div className="startbtn">
               <Button
                 style={{ backgroundColor: "#5964ff" }}
                 size="lg"

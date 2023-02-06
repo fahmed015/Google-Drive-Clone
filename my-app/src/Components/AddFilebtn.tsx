@@ -32,6 +32,9 @@ export default function AddFilebtn(props: any) {
           setShowProgress(true);
           console.log("Upload is " + progress + "% done");
         },
+        (error) => {
+          // Handle unsuccessful uploads
+        },
         () => {
           createFile(file, currentFolder, user.uid);
         }

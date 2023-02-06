@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Row, Card, Container } from "react-bootstrap";
 import { signUp } from "../Firebase/Firebase";
@@ -8,9 +8,8 @@ function SignupForm() {
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errormsg, setErrormsg] = useState<string>("");
-  const SignUp = async (e: { preventDefault: () => void }) => {
+  const SignUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const error = await signUp(email, password, name);
     if (!!error) {
       setErrormsg(error);
@@ -23,7 +22,7 @@ function SignupForm() {
     <Card className="signcard">
       <Container fluid>
         <Row className="signrow">
-          <Form onSubmit={SignUp}>
+          <Form onSubmit={(e) => SignUp(e)}>
             <Form.Group>
               <Form.Control
                 type="text"

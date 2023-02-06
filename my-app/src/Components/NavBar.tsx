@@ -20,21 +20,16 @@ export default function NavBar() {
     <Navbar>
       <Container>
         <Navbar.Brand href="/">
-          <div style={{ color: "#7a82f2", fontWeight: "bold" }}>
-            {" "}
-            Google Docs{" "}
-          </div>
+          <div className="logonav"> Google Docs </div>
         </Navbar.Brand>
 
         <Navbar.Collapse className="justify-content-end">
-          {/* <Nav className="me-auto"></Nav> */}
           <Nav>
             {
               !!user ? (
                 <NavDropdown
                   title={
                     <div className="avatar">{user.displayName?.charAt(0)}</div>
-                    // .charAt(0)
                   }
                   align="end"
                 >

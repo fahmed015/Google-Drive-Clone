@@ -9,9 +9,12 @@ function SigninForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errormsg, setErrormsg] = useState<string>("");
+  const [disable, setDisable] = useState<boolean>(false);
 
   const SignIn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setDisable(true);
 
     const error = await signIn(email, password);
 
@@ -45,7 +48,7 @@ function SigninForm() {
               />
             </Form.Group>
             <div className="d-grid ">
-              <Button type="submit" className="signbutton">
+              <Button type="submit" className="signbutton" disabled={disable}>
                 Sign In
               </Button>
             </div>

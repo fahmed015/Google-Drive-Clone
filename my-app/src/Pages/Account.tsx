@@ -8,7 +8,7 @@ import { FaFolder } from "react-icons/fa";
 import { BsFileEarmarkPdf } from "react-icons/bs";
 import { AiFillFile } from "react-icons/ai";
 import { BsImage } from "react-icons/bs";
-import { Dispatch } from "redux";
+// import { Dispatch } from "redux";
 import MoveModal from "../Components/MoveModal";
 
 import {
@@ -211,10 +211,7 @@ const Account = ({
               </Col>
             </Row>
 
-            <Row
-              style={{ alignItems: "center", justifyContent: "center" }}
-              className="px-3 mt-3"
-            >
+            <Row className="center px-3 mt-3">
               <Table borderless hover>
                 <thead>
                   <tr>

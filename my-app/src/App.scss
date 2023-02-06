@@ -1,4 +1,4 @@
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
 
 $width-container: 1000px;
 $color: #7a82f2;
@@ -9,6 +9,18 @@ $color4: #e6e6eb;
 .App {
   width: 100vw;
   height: 100vh;
+}
+.maincolor {
+  color: #7a82f2;
+}
+.center {
+  align-content: center;
+  justify-content: center;
+}
+
+.logonav {
+  color: $color;
+  font-weight: bold;
 }
 
 .signcard {
@@ -24,7 +36,7 @@ $color4: #e6e6eb;
 }
 .signbutton {
   background: $color;
-  font-weight: 'bold';
+  font-weight: bold;
   border-radius: 10px;
 
   &:hover {
@@ -41,9 +53,20 @@ $color4: #e6e6eb;
   color: $color;
   text-decoration: none;
 }
+.startbtn {
+  margin: auto;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+.info {
+  color: black;
+  text-align: center;
+  font-weight: bold;
+}
 .addfolderbtn {
   background: $color;
-  font-weight: 'bold';
+  font-weight: bold;
   border-radius: 10px;
   border-color: $color;
 
