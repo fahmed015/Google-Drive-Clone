@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 import React from "react";
 // import { StateRoot } from "../Store/Reducer";
 
-function Usercheck() {
+export function UserLoggedIn() {
   const user = useSelector((state: StateRoot) => state.user);
   return !!user ? <Outlet /> : <Navigate to="/" />;
 }
-export function Usercheck2() {
+export function UserLoggedOut() {
   const user = useSelector((state: StateRoot) => state.user);
 
   if (!!user) {
@@ -22,4 +22,4 @@ export function Usercheck2() {
     return <Outlet />;
   }
 }
-export default Usercheck;
+// export default Usercheck;
