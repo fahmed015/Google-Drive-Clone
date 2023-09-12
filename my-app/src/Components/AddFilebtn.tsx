@@ -34,12 +34,21 @@ export default function AddFilebtn(props: any) {
         },
         (error) => {
           // Handle unsuccessful uploads
+          console.log(error);
         },
         () => {
           createFile(file, currentFolder, user.uid);
         }
       );
     }
+  };
+  const test = async () => {
+    console.log("test");
+    const response = await fetch(
+      "https://firebasestorage.googleapis.com/v0/b/driveclone-d0e92.appspot.com/o/lg.png?alt=media&token=2d4aa513-faf6-4ec3-bba2-b4d66e051892"
+    );
+    const blob = await response.blob();
+    console.log(blob);
   };
 
   return (
@@ -57,6 +66,9 @@ export default function AddFilebtn(props: any) {
           </Toast.Body>
         </Toast>
       </ToastContainer>
+      <Button variant="secondry" onClick={test}>
+        cancel
+      </Button>
 
       <input
         type="file"
